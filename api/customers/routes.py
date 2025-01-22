@@ -14,13 +14,18 @@ async def read_customers_from_json() -> List[Customer]:
     data = json.loads(contents) 
     return [Customer(**item) for item in data]
 
+async def write_customers_to_json(data: List[Customer]):
+    file_path = os.path.join(os.path.dirname(__file__), 'customers.json')
+    async with aiofiles.open(file_path, 'w', encoding='utf-8') as f:
+        await f.write(json.dumps([c.dict() for c in data], indent=4))
+
 @customer_router.get("/", response_model=List[Customer])
 async def get_all_customers():
     data = await read_customers_from_json()
     return data
 
 @customer_router.get("/{customer_id}", response_model=Customer)
-async def get_customer(customer_id: int):
+async def get_customer(customer_id: str):
     data = await read_customers_from_json()
     customer = next((c for c in data if c.id == customer_id), None)
     if customer:
@@ -31,19 +36,25 @@ async def get_customer(customer_id: int):
 async def create_customer(customer: Customer):
     data = await read_customers_from_json()
     data.append(customer)
-    file_path = os.path.join(os.path.dirname(__file__), 'customers.json')
-    async with aiofiles.open(file_path, 'w', encoding='utf-8') as f:
-        await f.write(json.dumps([c.dict() for c in data], indent=4))
+    await write_customers_to_json(data)
     return customer
 
 @customer_router.put("/{customer_id}", response_model=Customer)
-async def update_customer(customer_id: int, customer: Customer):
+async def update_customer(customer_id: str, customer: Customer):
     data = await read_customers_from_json()
     customer_index = next((i for i, c in enumerate(data) if c.id == customer_id), None)
     if customer_index is not None:
         data[customer_index] = customer
-        file_path = os.path.join(os.path.dirname(__file__), 'customers.json')
-        async with aiofiles.open(file_path, 'w', encoding='utf-8') as f:
-            await f.write(json.dumps([c.dict() for c in data], indent=4))
+        await write_customers_to_json(data)
         return customer
+    return {"error": "Customer not found"}
+
+@customer_router.delete("/{customer_id}")
+async def delete_customer(customer_id: str):
+    data = await read_customers_from_json()
+    customer_index = next((i for i, c in enumerate(data) if c.id == customer_id), None)
+    if customer_index is not None:
+        data.pop(customer_index)
+        await write_customers_to_json(data)
+        return {"message": "Customer deleted"}
     return {"error": "Customer not found"}

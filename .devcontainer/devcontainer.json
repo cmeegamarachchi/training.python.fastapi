@@ -1,27 +1,27 @@
 {
-	"name": "Python 3",
-   "build":{
-      "dockerfile":"Dockerfile"
-   },
-	"customizations": {
-		"vscode": {
-			"settings": {
-				"[python]": {
-					"editor.formatOnSave": true,
-					"editor.defaultFormatter": "ms-python.black-formatter"
-				},
-				"workbench.iconTheme": "material-icon-theme"
-			  },
-			"extensions": [
-				"PKief.material-icon-theme",
-				"ms-python.python",
-				"ms-python.vscode-pylance",
-				"ms-python.black-formatter"
-			]
-		}
-	},
-	"postCreateCommand": "npm install --global prettier && pip install black",
-	"features": {
-		"ghcr.io/devcontainers/features/node:1": {}
-	}
+  "name": "Python 3",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "[python]": {
+          "editor.formatOnSave": true,
+          "editor.defaultFormatter": "ms-python.black-formatter"
+        },
+        "workbench.iconTheme": "material-icon-theme"
+      },
+      "extensions": [
+        "PKief.material-icon-theme",
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "ms-python.black-formatter"
+      ]
+    }
+  },
+  "postCreateCommand": "npm install --global prettier && pip install black",
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {}
+  }
 }

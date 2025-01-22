@@ -2,7 +2,7 @@ import json
 import aiofiles
 import os
 from typing import List
-from fastapi import APIRouter
+from fastapi import APIRouter, status, HTTPException
 from api.customers.schema import Customer
 
 customer_router = APIRouter()
@@ -24,22 +24,22 @@ async def get_all_customers():
     customers = await read_customers_from_json()
     return customers
 
-@customer_router.get("/{customer_id}", response_model=Customer)
+@customer_router.get("/{customer_id}", response_model=Customer, status_code=status.HTTP_200_OK)
 async def get_customer(customer_id: str):
     customers = await read_customers_from_json()
     customer = next((c for c in customers if c.id == customer_id), None)
     if customer:
         return customer
-    return {"error": "Customer not found"}
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Customer not found")
 
-@customer_router.post("/", response_model=Customer)
+@customer_router.post("/", response_model=Customer, status_code=status.HTTP_201_CREATED)
 async def create_customer(customer: Customer):
     customers = await read_customers_from_json()
     customers.append(customer)
     await write_customers_to_json(customers)
     return customer
 
-@customer_router.put("/{customer_id}", response_model=Customer)
+@customer_router.put("/{customer_id}", response_model=Customer, status_code=status.HTTP_200_OK)
 async def update_customer(customer_id: str, customer: Customer):
     customers = await read_customers_from_json()
     customer_index = next((i for i, c in enumerate(customers) if c.id == customer_id), None)
@@ -47,9 +47,9 @@ async def update_customer(customer_id: str, customer: Customer):
         customers[customer_index] = customer
         await write_customers_to_json(customers)
         return customer
-    return {"error": "Customer not found"}
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Customer not found")
 
-@customer_router.delete("/{customer_id}")
+@customer_router.delete("/{customer_id}", status_code=status.HTTP_200_OK)
 async def delete_customer(customer_id: str):
     customers = await read_customers_from_json()
     customer_index = next((i for i, c in enumerate(customers) if c.id == customer_id), None)
@@ -57,4 +57,4 @@ async def delete_customer(customer_id: str):
         customers.pop(customer_index)
         await write_customers_to_json(customers)
         return {"message": "Customer deleted"}
-    return {"error": "Customer not found"}
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Customer not found")

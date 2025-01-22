@@ -21,40 +21,40 @@ async def write_customers_to_json(data: List[Customer]):
 
 @customer_router.get("/", response_model=List[Customer])
 async def get_all_customers():
-    data = await read_customers_from_json()
-    return data
+    customers = await read_customers_from_json()
+    return customers
 
 @customer_router.get("/{customer_id}", response_model=Customer)
 async def get_customer(customer_id: str):
-    data = await read_customers_from_json()
-    customer = next((c for c in data if c.id == customer_id), None)
+    customers = await read_customers_from_json()
+    customer = next((c for c in customers if c.id == customer_id), None)
     if customer:
         return customer
     return {"error": "Customer not found"}
 
 @customer_router.post("/", response_model=Customer)
 async def create_customer(customer: Customer):
-    data = await read_customers_from_json()
-    data.append(customer)
-    await write_customers_to_json(data)
+    customers = await read_customers_from_json()
+    customers.append(customer)
+    await write_customers_to_json(customers)
     return customer
 
 @customer_router.put("/{customer_id}", response_model=Customer)
 async def update_customer(customer_id: str, customer: Customer):
-    data = await read_customers_from_json()
-    customer_index = next((i for i, c in enumerate(data) if c.id == customer_id), None)
+    customers = await read_customers_from_json()
+    customer_index = next((i for i, c in enumerate(customers) if c.id == customer_id), None)
     if customer_index is not None:
-        data[customer_index] = customer
-        await write_customers_to_json(data)
+        customers[customer_index] = customer
+        await write_customers_to_json(customers)
         return customer
     return {"error": "Customer not found"}
 
 @customer_router.delete("/{customer_id}")
 async def delete_customer(customer_id: str):
-    data = await read_customers_from_json()
-    customer_index = next((i for i, c in enumerate(data) if c.id == customer_id), None)
+    customers = await read_customers_from_json()
+    customer_index = next((i for i, c in enumerate(customers) if c.id == customer_id), None)
     if customer_index is not None:
-        data.pop(customer_index)
-        await write_customers_to_json(data)
+        customers.pop(customer_index)
+        await write_customers_to_json(customers)
         return {"message": "Customer deleted"}
     return {"error": "Customer not found"}

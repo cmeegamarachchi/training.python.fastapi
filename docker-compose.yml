@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "80:80" # Expose the application on port 80
+      - "8000:80" # Expose the application on port 80
     environment:
       - UVICORN_WORKERS=4 # Example: Custom environment variable for FastAPI/uvicorn
     restart: unless-stopped

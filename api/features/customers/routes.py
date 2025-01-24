@@ -3,15 +3,14 @@ import aiofiles
 import os
 from typing import List
 from fastapi import APIRouter, status, HTTPException
-from api.customers.schema import Customer
+from api.common.utils import read_from_json
+from api.features.customers.schema import Customer
 
 customer_router = APIRouter()
 
 async def read_customers_from_json() -> List[Customer]:
     file_path = os.path.join(os.path.dirname(__file__), 'customers.json')
-    async with aiofiles.open(file_path, 'r', encoding='utf-8') as f:
-        contents = await f.read()
-    data = json.loads(contents) 
+    data = await read_from_json(file_path) 
     return [Customer(**item) for item in data]
 
 async def write_customers_to_json(data: List[Customer]):

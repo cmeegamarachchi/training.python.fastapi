@@ -1,6 +1,6 @@
 from fastapi import FastAPI
-from api.customers.routes import customer_router
-from api.countries.routes import country_router
+from api.features.customers.routes import customer_router
+from api.features.countries.routes import country_router
 
 app = FastAPI()
 

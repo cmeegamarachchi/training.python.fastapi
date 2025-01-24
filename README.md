@@ -9,7 +9,6 @@ pip install -r requirements.txt
 
 Start api  
 ```bash
-cd api
 uvicorn api:app --reload
 ```
 
